@@ -29,11 +29,11 @@ pas le flow avant d'avoir vérifié les nouvelles entités et leurs identifiants
 
 ## HACS / Marketplace
 
-Le dossier est préparé comme dépôt HACS de type intégration. Avant publication,
-remplacer l'URL de documentation dans `custom_components/scc/manifest.json` par
-l'URL réelle du dépôt et activer le signalement privé des vulnérabilités sur
-GitHub. Créer ensuite une release, puis ajouter le dépôt dans HACS/Marketplace
-comme dépôt personnalisé de type **Intégration**.
+Le dépôt public est [COOLj0on/scc-home-assistant](https://github.com/COOLj0on/scc-home-assistant).
+Dans HACS/Marketplace, ajouter cette URL comme dépôt personnalisé de type
+**Intégration**, puis installer la version `v0.1.0`. Pour les versions suivantes,
+mettre à jour la version dans `manifest.json` et créer une release GitHub avec
+le même numéro.
 
 ## Développement
 
