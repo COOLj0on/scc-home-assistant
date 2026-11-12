@@ -1,0 +1,43 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to the Chriselec controller",
+        "description": "Configure the controller connection, polling interval, and sensors to create.",
+        "data": {
+          "host": "Host or base URL",
+          "path": "Data path",
+          "username": "Username",
+          "password": "Password (optional)",
+          "sensors": "Sensors to create",
+          "scan_interval": "Polling interval (seconds)"
+        }
+      }
+    },
+    "options": {
+      "step": {
+        "init": {
+          "title": "Chriselec SCC settings",
+          "description": "Change the connection, polling interval, and selected sensors.",
+          "data": {
+            "host": "Host or base URL",
+            "path": "Data path",
+            "username": "Username",
+            "password": "Password (leave blank to keep the current password)",
+            "sensors": "Sensors to create",
+            "scan_interval": "Polling interval (seconds)"
+          }
+        }
+      }
+    },
+    "error": {
+      "invalid_host": "Enter a valid HTTP or HTTPS host without a path.",
+      "invalid_path": "Enter a data path without query parameters or a fragment.",
+      "no_sensors_selected": "Select at least one sensor.",
+      "already_configured": "This controller is already configured."
+    },
+    "abort": {
+      "already_configured": "This controller is already configured."
+    }
+  }
+}

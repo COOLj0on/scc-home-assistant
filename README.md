@@ -1,0 +1,44 @@
+# Chriselec SCC
+
+Copyright (C) 2026 COOLj0on. Licensed under GNU AGPL-3.0-only; see [LICENSE](LICENSE).
+
+Intégration personnalisée Home Assistant pour les régulateurs Chriselec Grandis
+650 HK. Elle interroge `medius_val.xml` à intervalle configurable et propose les
+31 valeurs décodées par le flow Node-RED SCC comme capteurs Home Assistant.
+
+## Configuration
+
+Ajouter l'intégration depuis **Paramètres → Appareils et services → Ajouter une
+intégration → Chriselec SCC**. Saisir l'adresse du contrôleur; le chemin par
+défaut est `/medius_val.xml`. Des identifiants HTTP Basic sont facultatifs.
+À l'installation, tous les capteurs sont présélectionnés; choisir ceux à créer
+et une fréquence de 5 à 3600 secondes (30 secondes par défaut). Ces paramètres,
+l'adresse, le chemin et les identifiants restent modifiables dans **Configurer**.
+
+Les sondes S1–S10 et F1S1–F1S4 sont publiées en °C. Les registres R0–R7 et
+HE1–HE3 sont publiés en %. Les unités des registres Str, Q1 et Q2 restent à
+préciser. Les sondes au-dessus de la limite valide du protocole passent à l'état
+inconnu plutôt qu'à `0`; une réponse mal formée rend les capteurs indisponibles.
+Si des identifiants HTTP Basic sont utilisés, préférer HTTPS ou un réseau local
+de confiance.
+
+Les entités Node-RED déjà présentes ont leurs propres identifiants de registre.
+Cette intégration ne les reprend pas automatiquement : pendant la validation,
+les deux sources peuvent donc coexister avec des entités en double. Ne désactive
+pas le flow avant d'avoir vérifié les nouvelles entités et leurs identifiants.
+
+## HACS / Marketplace
+
+Le dossier est préparé comme dépôt HACS de type intégration. Avant publication,
+remplacer l'URL de documentation dans `custom_components/scc/manifest.json` par
+l'URL réelle du dépôt et activer le signalement privé des vulnérabilités sur
+GitHub. Créer ensuite une release, puis ajouter le dépôt dans HACS/Marketplace
+comme dépôt personnalisé de type **Intégration**.
+
+## Développement
+
+Exécuter les tests du parseur avec :
+
+```powershell
+python -m unittest discover -s tests -v
+```

@@ -1,0 +1,43 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connexion au régulateur Chriselec",
+        "description": "Configure la connexion, la fréquence d'interrogation et les capteurs à créer.",
+        "data": {
+          "host": "Hôte ou URL de base",
+          "path": "Chemin des données",
+          "username": "Nom d'utilisateur",
+          "password": "Mot de passe (facultatif)",
+          "sensors": "Capteurs à créer",
+          "scan_interval": "Fréquence d'interrogation (secondes)"
+        }
+      }
+    },
+    "options": {
+      "step": {
+        "init": {
+          "title": "Paramètres Chriselec SCC",
+          "description": "Modifie la connexion, la fréquence d'interrogation et les capteurs sélectionnés.",
+          "data": {
+            "host": "Hôte ou URL de base",
+            "path": "Chemin des données",
+            "username": "Nom d'utilisateur",
+            "password": "Mot de passe (laisser vide pour le conserver)",
+            "sensors": "Capteurs à créer",
+            "scan_interval": "Fréquence d'interrogation (secondes)"
+          }
+        }
+      }
+    },
+    "error": {
+      "invalid_host": "Saisis un hôte HTTP ou HTTPS valide, sans chemin.",
+      "invalid_path": "Saisis un chemin de données sans paramètres de requête ni fragment.",
+      "no_sensors_selected": "Sélectionne au moins un capteur.",
+      "already_configured": "Ce régulateur est déjà configuré."
+    },
+    "abort": {
+      "already_configured": "Ce régulateur est déjà configuré."
+    }
+  }
+}
