@@ -3,14 +3,22 @@
     "step": {
       "user": {
         "title": "Connect to the Chriselec controller",
-        "description": "Configure the controller connection, polling interval, and sensors to create.",
+        "description": "Configure the controller connection, sensors to create, and their locations in the thermal system.",
         "data": {
           "host": "Host or base URL",
           "path": "Data path",
           "username": "Username",
           "password": "Password (optional)",
           "sensors": "Sensors to create",
-          "scan_interval": "Polling interval (seconds)"
+          "scan_interval": "Polling interval (seconds)",
+          "tank_top_sensor": "Top tank temperature probe",
+          "tank_middle_sensor": "Middle tank temperature probe",
+          "tank_bottom_sensor": "Bottom tank temperature probe",
+          "solar_flow_sensor": "Solar panels flow temperature probe",
+          "solar_return_sensor": "Solar panels return temperature probe",
+          "wood_boiler_sensor": "Wood boiler temperature probe",
+          "solar_pumps": "Solar circulation pumps",
+          "wood_boiler_pumps": "Wood boiler circulation pumps"
         }
       }
     },
@@ -18,14 +26,22 @@
       "step": {
         "init": {
           "title": "Chriselec SCC settings",
-          "description": "Change the connection, polling interval, and selected sensors.",
+          "description": "Change the connection, selected sensors, and their locations in the thermal system.",
           "data": {
             "host": "Host or base URL",
             "path": "Data path",
             "username": "Username",
             "password": "Password (leave blank to keep the current password)",
             "sensors": "Sensors to create",
-            "scan_interval": "Polling interval (seconds)"
+            "scan_interval": "Polling interval (seconds)",
+            "tank_top_sensor": "Top tank temperature probe",
+            "tank_middle_sensor": "Middle tank temperature probe",
+            "tank_bottom_sensor": "Bottom tank temperature probe",
+            "solar_flow_sensor": "Solar panels flow temperature probe",
+            "solar_return_sensor": "Solar panels return temperature probe",
+            "wood_boiler_sensor": "Wood boiler temperature probe",
+            "solar_pumps": "Solar circulation pumps",
+            "wood_boiler_pumps": "Wood boiler circulation pumps"
           }
         }
       }

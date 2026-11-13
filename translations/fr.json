@@ -3,14 +3,22 @@
     "step": {
       "user": {
         "title": "Connexion au régulateur Chriselec",
-        "description": "Configure la connexion, la fréquence d'interrogation et les capteurs à créer.",
+        "description": "Configure la connexion, les capteurs à créer et leur emplacement dans l'installation thermique.",
         "data": {
           "host": "Hôte ou URL de base",
           "path": "Chemin des données",
           "username": "Nom d'utilisateur",
           "password": "Mot de passe (facultatif)",
           "sensors": "Capteurs à créer",
-          "scan_interval": "Fréquence d'interrogation (secondes)"
+          "scan_interval": "Fréquence d'interrogation (secondes)",
+          "tank_top_sensor": "Sonde du haut du ballon",
+          "tank_middle_sensor": "Sonde du milieu du ballon",
+          "tank_bottom_sensor": "Sonde du bas du ballon",
+          "solar_flow_sensor": "Sonde de départ des panneaux solaires",
+          "solar_return_sensor": "Sonde de retour des panneaux solaires",
+          "wood_boiler_sensor": "Sonde du poêle bouilleur",
+          "solar_pumps": "Pompes de circulation solaire",
+          "wood_boiler_pumps": "Pompes de circulation du poêle"
         }
       }
     },
@@ -18,14 +26,22 @@
       "step": {
         "init": {
           "title": "Paramètres Chriselec SCC",
-          "description": "Modifie la connexion, la fréquence d'interrogation et les capteurs sélectionnés.",
+          "description": "Modifie la connexion, les capteurs sélectionnés et leur emplacement dans l'installation thermique.",
           "data": {
             "host": "Hôte ou URL de base",
             "path": "Chemin des données",
             "username": "Nom d'utilisateur",
             "password": "Mot de passe (laisser vide pour le conserver)",
             "sensors": "Capteurs à créer",
-            "scan_interval": "Fréquence d'interrogation (secondes)"
+            "scan_interval": "Fréquence d'interrogation (secondes)",
+            "tank_top_sensor": "Sonde du haut du ballon",
+            "tank_middle_sensor": "Sonde du milieu du ballon",
+            "tank_bottom_sensor": "Sonde du bas du ballon",
+            "solar_flow_sensor": "Sonde de départ des panneaux solaires",
+            "solar_return_sensor": "Sonde de retour des panneaux solaires",
+            "wood_boiler_sensor": "Sonde du poêle bouilleur",
+            "solar_pumps": "Pompes de circulation solaire",
+            "wood_boiler_pumps": "Pompes de circulation du poêle"
           }
         }
       }

@@ -16,15 +16,21 @@ from .const import (
     CONF_PATH,
     CONF_SCAN_INTERVAL,
     CONF_SENSORS,
+    CONF_SOLAR_PUMPS,
     CONF_USERNAME,
+    CONF_WOOD_BOILER_PUMPS,
     DEFAULT_HOST,
     DEFAULT_PATH,
     DEFAULT_SCAN_INTERVAL,
+    DEFAULT_SENSOR_ROLES,
     DOMAIN,
     MAX_SCAN_INTERVAL,
     MIN_SCAN_INTERVAL,
+    PUMP_SENSOR_KEYS,
+    SENSOR_ROLE_FIELDS,
     SENSOR_KEYS,
     SENSOR_NAMES,
+    TEMPERATURE_SENSOR_KEYS,
 )
 
 
@@ -66,40 +72,96 @@ def _setup_schema(
     username: str,
     sensors: list[str] | tuple[str, ...],
     scan_interval: int,
+    sensor_roles: dict[str, str],
+    solar_pumps: list[str],
+    wood_boiler_pumps: list[str],
 ) -> vol.Schema:
     """Build the setup and options forms."""
-    return vol.Schema(
-        {
-            vol.Required(CONF_HOST, default=host): str,
-            vol.Required(CONF_PATH, default=path): str,
-            vol.Optional(CONF_USERNAME, default=username): str,
-            vol.Optional(CONF_PASSWORD): selector.TextSelector(
-                selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
-            ),
-            vol.Required(CONF_SENSORS, default=list(sensors)): selector.SelectSelector(
+    schema: dict[Any, Any] = {
+        vol.Required(CONF_HOST, default=host): str,
+        vol.Required(CONF_PATH, default=path): str,
+        vol.Optional(CONF_USERNAME, default=username): str,
+        vol.Optional(CONF_PASSWORD): selector.TextSelector(
+            selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
+        ),
+        vol.Required(CONF_SENSORS, default=list(sensors)): selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=[
+                    {"value": key, "label": name}
+                    for key, name in SENSOR_NAMES.items()
+                ],
+                multiple=True,
+                mode=selector.SelectSelectorMode.LIST,
+            )
+        ),
+        vol.Required(
+            CONF_SCAN_INTERVAL,
+            default=scan_interval,
+        ): selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                min=MIN_SCAN_INTERVAL,
+                max=MAX_SCAN_INTERVAL,
+                step=5,
+                mode=selector.NumberSelectorMode.BOX,
+                unit_of_measurement="s",
+            )
+        ),
+    }
+
+    temperature_options = [
+        {"value": key, "label": SENSOR_NAMES[key]}
+        for key in SENSOR_NAMES
+        if key in TEMPERATURE_SENSOR_KEYS
+    ]
+    for field in SENSOR_ROLE_FIELDS:
+        schema[vol.Required(field, default=sensor_roles[field])] = (
+            selector.SelectSelector(
                 selector.SelectSelectorConfig(
-                    options=[
-                        {"value": key, "label": name}
-                        for key, name in SENSOR_NAMES.items()
-                    ],
-                    multiple=True,
-                    mode=selector.SelectSelectorMode.LIST,
+                    options=[{"value": "", "label": "—"}]
+                    + temperature_options,
+                    mode=selector.SelectSelectorMode.DROPDOWN,
                 )
-            ),
-            vol.Required(
-                CONF_SCAN_INTERVAL,
-                default=scan_interval,
-            ): selector.NumberSelector(
-                selector.NumberSelectorConfig(
-                    min=MIN_SCAN_INTERVAL,
-                    max=MAX_SCAN_INTERVAL,
-                    step=5,
-                    mode=selector.NumberSelectorMode.BOX,
-                    unit_of_measurement="s",
-                )
-            ),
-        }
-    )
+            )
+        )
+
+    pump_options = [
+        {"value": key, "label": SENSOR_NAMES[key]}
+        for key in SENSOR_NAMES
+        if key in PUMP_SENSOR_KEYS
+    ]
+    for field, pumps in (
+        (CONF_SOLAR_PUMPS, solar_pumps),
+        (CONF_WOOD_BOILER_PUMPS, wood_boiler_pumps),
+    ):
+        schema[vol.Required(field, default=pumps)] = selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=pump_options,
+                multiple=True,
+                mode=selector.SelectSelectorMode.LIST,
+            )
+        )
+
+    return vol.Schema(schema)
+
+
+def _selected_sensor_keys(user_input: dict[str, Any]) -> list[str]:
+    """Include every sensor assigned to a thermal-system role."""
+    assigned = [
+        user_input[field]
+        for field in SENSOR_ROLE_FIELDS
+        if user_input[field]
+    ]
+    assigned.extend(user_input[CONF_SOLAR_PUMPS])
+    assigned.extend(user_input[CONF_WOOD_BOILER_PUMPS])
+    return list(dict.fromkeys([*user_input[CONF_SENSORS], *assigned]))
+
+
+def _configured_roles(data: dict[str, Any]) -> dict[str, str]:
+    """Return stored role selections, including defaults for older entries."""
+    return {
+        field: data.get(field, default)
+        for field, default in DEFAULT_SENSOR_ROLES.items()
+    }
 
 
 class SCCConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -122,7 +184,7 @@ class SCCConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 path = user_input[CONF_PATH].strip() or DEFAULT_PATH
                 if "?" in path or "#" in path:
                     errors["path"] = "invalid_path"
-                elif not user_input[CONF_SENSORS]:
+                elif not _selected_sensor_keys(user_input):
                     errors["base"] = "no_sensors_selected"
                 else:
                     await self.async_set_unique_id(base_url.lower())
@@ -140,6 +202,11 @@ class SCCConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         options={
                             CONF_SENSORS: user_input[CONF_SENSORS],
                             CONF_SCAN_INTERVAL: int(user_input[CONF_SCAN_INTERVAL]),
+                            **_configured_roles(user_input),
+                            CONF_SOLAR_PUMPS: user_input[CONF_SOLAR_PUMPS],
+                            CONF_WOOD_BOILER_PUMPS: user_input[
+                                CONF_WOOD_BOILER_PUMPS
+                            ],
                         },
                     )
 
@@ -151,6 +218,9 @@ class SCCConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 "",
                 SENSOR_KEYS,
                 DEFAULT_SCAN_INTERVAL,
+                DEFAULT_SENSOR_ROLES,
+                [],
+                [],
             ),
             errors=errors,
         )
@@ -182,7 +252,7 @@ class SCCOptionsFlow(config_entries.OptionsFlow):
                 path = user_input[CONF_PATH].strip() or DEFAULT_PATH
                 if "?" in path or "#" in path:
                     errors["path"] = "invalid_path"
-                elif not user_input[CONF_SENSORS]:
+                elif not _selected_sensor_keys(user_input):
                     errors["base"] = "no_sensors_selected"
                 elif any(
                     entry.entry_id != self.config_entry.entry_id
@@ -212,6 +282,11 @@ class SCCOptionsFlow(config_entries.OptionsFlow):
                             CONF_PASSWORD: password,
                             CONF_SENSORS: user_input[CONF_SENSORS],
                             CONF_SCAN_INTERVAL: int(user_input[CONF_SCAN_INTERVAL]),
+                            **_configured_roles(user_input),
+                            CONF_SOLAR_PUMPS: user_input[CONF_SOLAR_PUMPS],
+                            CONF_WOOD_BOILER_PUMPS: user_input[
+                                CONF_WOOD_BOILER_PUMPS
+                            ],
                         },
                     )
 
@@ -225,6 +300,9 @@ class SCCOptionsFlow(config_entries.OptionsFlow):
                 data.get(CONF_USERNAME, ""),
                 data.get(CONF_SENSORS, SENSOR_KEYS),
                 data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+                _configured_roles(data),
+                data.get(CONF_SOLAR_PUMPS, []),
+                data.get(CONF_WOOD_BOILER_PUMPS, []),
             ),
             errors=errors,
         )

@@ -14,6 +14,24 @@ défaut est `/medius_val.xml`. Des identifiants HTTP Basic sont facultatifs.
 À l'installation, tous les capteurs sont présélectionnés; choisir ceux à créer
 et une fréquence de 5 à 3600 secondes (30 secondes par défaut). Ces paramètres,
 l'adresse, le chemin et les identifiants restent modifiables dans **Configurer**.
+Le formulaire permet aussi d'affecter chaque sonde à son emplacement (haut,
+milieu et bas du ballon, départ et retour solaire, poêle bouilleur) et de
+sélectionner les pompes de chaque circuit. Les sondes affectées sont créées
+automatiquement même si elles n'étaient pas cochées dans la liste générale.
+
+## Carte du ballon tampon
+
+L'intégration fournit une carte Lovelace qui affiche les trois températures du
+ballon, les températures départ/retour solaire, celle du poêle et l'état des
+pompes sélectionnées. Après le premier démarrage de l'intégration, ajouter la
+ressource **Paramètres → Tableaux de bord → Ressources** avec l'URL
+`/scc/scc-thermal-card.js` et le type **Module JavaScript**. Ajouter ensuite une
+carte manuelle de type `custom:scc-thermal-card` au tableau de bord. Les sondes
+et pompes affectées dans la configuration de l'intégration sont détectées
+automatiquement par la carte.
+Si plusieurs régulateurs SCC sont configurés, renseigner `controller_entity`
+dans la configuration YAML de la carte avec l'identifiant d'une entité SCC du
+régulateur à afficher.
 
 Les sondes S1–S10 et F1S1–F1S4 sont publiées en °C. Les registres R0–R7 et
 HE1–HE3 sont publiés en %. Les unités des registres Str, Q1 et Q2 restent à

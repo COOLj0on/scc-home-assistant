@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
@@ -14,12 +17,28 @@ from .const import (
     CONF_USERNAME,
     DEFAULT_PATH,
     DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
 )
 from .coordinator import SCCDataUpdateCoordinator
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 type SCCConfigEntry = ConfigEntry[SCCDataUpdateCoordinator]
+
+
+async def async_setup(hass: HomeAssistant, config: dict) -> bool:
+    """Register the bundled thermal-system Lovelace card."""
+    card_path = Path(__file__).parent / "www" / "scc-thermal-card.js"
+    await hass.http.async_register_static_paths(
+        [
+            StaticPathConfig(
+                f"/{DOMAIN}/scc-thermal-card.js",
+                str(card_path),
+                cache_headers=False,
+            )
+        ]
+    )
+    return True
 
 
 async def async_setup_entry(

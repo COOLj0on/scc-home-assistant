@@ -8,6 +8,14 @@ CONF_USERNAME = "username"
 CONF_PASSWORD = "password"
 CONF_SENSORS = "sensors"
 CONF_SCAN_INTERVAL = "scan_interval"
+CONF_TANK_TOP_SENSOR = "tank_top_sensor"
+CONF_TANK_MIDDLE_SENSOR = "tank_middle_sensor"
+CONF_TANK_BOTTOM_SENSOR = "tank_bottom_sensor"
+CONF_SOLAR_FLOW_SENSOR = "solar_flow_sensor"
+CONF_SOLAR_RETURN_SENSOR = "solar_return_sensor"
+CONF_WOOD_BOILER_SENSOR = "wood_boiler_sensor"
+CONF_SOLAR_PUMPS = "solar_pumps"
+CONF_WOOD_BOILER_PUMPS = "wood_boiler_pumps"
 
 DEFAULT_HOST = ""
 DEFAULT_PATH = "/medius_val.xml"
@@ -58,9 +66,26 @@ TEMPERATURE_SENSOR_KEYS = frozenset(
         *(f"F1S{index}" for index in range(1, 5)),
     }
 )
+SENSOR_ROLE_FIELDS = {
+    CONF_TANK_TOP_SENSOR: "tank_top",
+    CONF_TANK_MIDDLE_SENSOR: "tank_middle",
+    CONF_TANK_BOTTOM_SENSOR: "tank_bottom",
+    CONF_SOLAR_FLOW_SENSOR: "solar_flow",
+    CONF_SOLAR_RETURN_SENSOR: "solar_return",
+    CONF_WOOD_BOILER_SENSOR: "wood_boiler",
+}
+DEFAULT_SENSOR_ROLES = {
+    CONF_TANK_TOP_SENSOR: "S3",
+    CONF_TANK_MIDDLE_SENSOR: "S8",
+    CONF_TANK_BOTTOM_SENSOR: "S2",
+    CONF_SOLAR_FLOW_SENSOR: "S4",
+    CONF_SOLAR_RETURN_SENSOR: "S7",
+    CONF_WOOD_BOILER_SENSOR: "S6",
+}
 PERCENTAGE_SENSOR_KEYS = frozenset(
     {
         *(f"R{index}" for index in range(8)),
         *(f"HE{index}" for index in range(1, 4)),
     }
 )
+PUMP_SENSOR_KEYS = PERCENTAGE_SENSOR_KEYS | frozenset({"F1R1", "F1R2", "F1R3"})
